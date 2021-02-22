@@ -62,9 +62,12 @@ int main(int argc, char* argv[]){
     Mat warp_img;
     warpPerspective(img,warp_img,H,img.size());
     imshow("warpped",warp_img);
-
-    // Rect crop
-
+    imwrite("warpped.jpg",warp_img);
+    waitKey(0);
+    Rect crop(472,52,328,778);
+    Mat cropped_img = warp_img(crop);
+    imshow("crop",cropped_img);
+    imwrite("crop.jpg",cropped_img);
     // Mat H = findHomography()
     waitKey(0);
 
