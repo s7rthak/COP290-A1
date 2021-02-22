@@ -19,10 +19,10 @@ int main( int argc, char** argv)
     Mat im_dst = imread("empty.jpg");
     // Four corners of the book in destination image.
     vector<Point2f> pts_dst;
-    pts_dst.push_back(Point2f(318, 256));
-    pts_dst.push_back(Point2f(534, 372));
-    pts_dst.push_back(Point2f(316, 670));
-    pts_dst.push_back(Point2f(73, 473));
+    pts_dst.push_back(Point2f(472, 52));
+    pts_dst.push_back(Point2f(472, 830));
+    pts_dst.push_back(Point2f(800, 830));
+    pts_dst.push_back(Point2f(800, 52));
 
     // Calculate Homography
     Mat h = findHomography(pts_src, pts_dst);
