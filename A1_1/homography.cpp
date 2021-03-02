@@ -74,7 +74,7 @@ int main(int argc, char* argv[]){
           return -1; 
     }
     
-    vector<Point2f> corner_dest; // Destination corner upon applying homography (here it is fixed to some coordinates).
+    vector<Point2f> corner_dest; // Destination corner upon applying homography (here it is fixed to given coordinates).
     corner_dest.push_back( Point2f(472,52) ) ;
     corner_dest.push_back( Point2f(472,830) ) ;
     corner_dest.push_back( Point2f(800,830) ) ;
