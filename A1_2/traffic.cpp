@@ -7,6 +7,17 @@ using namespace cv;
 using namespace std;
 using namespace boost::program_options;
 
+Mat process(Mat img, int th){
+    Mat processing;
+    threshold(img, processing, th, 255, THRESH_BINARY);
+    Mat closing, opening;
+    morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    Mat dilated;
+    dilate(opening, dilated, Mat(), Point(-1, -1), 2, 1, 1);
+    return dilated;
+}
+
 int main(){
     string traffic_video = "trafficvideo.mp4";
     VideoCapture cap(traffic_video);
@@ -33,6 +44,7 @@ int main(){
 
     vector<float> queue_density;
     vector<float> time;
+    vector<float> dynamic_density;
 
     int count = 0;
 
@@ -50,20 +62,26 @@ int main(){
 
         Mat transformed = perspective_transform(src, dest, crop_sz, frame);
         // Mat transformed = perspective_transform(src, dest, focus_sz, frame);
-        Mat diff;
-        absdiff(empty_road_transformed, transformed, diff);
+        Mat static_diff;
+        absdiff(empty_road_transformed, transformed, static_diff);
 
-        // if(ch) absdiff(prev, transformed, diff);
-        // ch = true;
-        Mat diff_bw;
-        cvtColor(diff, diff_bw, COLOR_BGR2GRAY);
-        Mat processing;
-        threshold(diff_bw, processing, 35, 255, THRESH_BINARY);
-        Mat closing, opening;
-        morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
-        morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
-        Mat dilated;
-        dilate(opening, dilated, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+        Mat static_diff_bw;
+        cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY);
+        Mat dilated = process(static_diff_bw, 35);
+
+        if(ch){
+            Mat dynamic_diff;
+            absdiff(prev, transformed, dynamic_diff);
+
+            Mat dynamic_diff_bw;
+            cvtColor(dynamic_diff, dynamic_diff_bw, COLOR_BGR2GRAY);
+            Mat dynamic_dilated = process(dynamic_diff_bw, 30);
+
+            float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
+            dynamic_density.push_back(d_density);
+            imshow("Frame", dynamic_dilated);
+        }
+        ch = true;
 
         // Rect focus_region(114, 202, 344, 606);
         // Mat focus_img = dilated(focus_img);
@@ -80,7 +98,7 @@ int main(){
         // Display the resulting frame
         // imshow( "Frame", dilated );
 
-        // prev = transformed;
+        prev = transformed;
 
         // Press  ESC on keyboard to exit
         char c=(char)waitKey(25);
@@ -95,8 +113,8 @@ int main(){
     cv::destroyAllWindows();
 
     cout<<"Time, Queue-Density\n";
-    for(int i=0;i<queue_density.size();i++){
-        cout<<time[i]<<", "<<queue_density[i]<<"\n";
+    for(int i=1;i<queue_density.size();i++){
+        cout<<time[i]<<", "<<queue_density[i]<<", "<<dynamic_density[i-1]<<"\n";
     }
         
     return 0;
