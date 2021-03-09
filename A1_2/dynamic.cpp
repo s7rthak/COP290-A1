@@ -1,4 +1,4 @@
-#include <opencv4/opencv2/opencv.hpp> 
+#include <opencv2/opencv.hpp> 
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "perspective.hpp"
@@ -79,7 +79,7 @@ int main(){
         cvtColor(hsv8, bgr, COLOR_HSV2BGR);
         Mat black_white;
         cvtColor(bgr, black_white, COLOR_BGR2GRAY);
-        black_white = process(black_white, 20);
+        black_white = process(black_white, 10);
         float d_density = countNonZero(black_white)*1.0/(black_white.rows*black_white.cols);
         dynamic_density.push_back(d_density);
         imshow("frame2", black_white);

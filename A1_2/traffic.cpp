@@ -1,7 +1,12 @@
-#include <opencv4/opencv2/opencv.hpp> 
+#include <opencv2/opencv.hpp> 
 #include <iostream>
 #include <boost/program_options.hpp>
 #include "perspective.hpp"
+#include <opencv2/imgcodecs.hpp>
+#include <opencv2/imgproc.hpp>
+#include <opencv2/videoio.hpp>
+#include <opencv2/highgui.hpp>
+#include <opencv2/video.hpp>
 
 using namespace cv;
 using namespace std;
@@ -47,7 +52,8 @@ int main(){
     vector<float> dynamic_density;
 
     int count = 0;
-
+    Ptr<BackgroundSubtractor> psubtr; 
+    psubtr= createBackgroundSubtractorMOG2();
     while(1){
 
         Mat frame;
@@ -61,25 +67,41 @@ int main(){
 
 
         Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-        // Mat transformed = perspective_transform(src, dest, focus_sz, frame);
+        // Mat transformed = perspective_transform(src, dest, focus_sz<, frame);
         Mat static_diff;
         absdiff(empty_road_transformed, transformed, static_diff);
 
         Mat static_diff_bw;
         cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY);
         Mat dilated = process(static_diff_bw, 35);
+        
 
         if(ch){
             Mat dynamic_diff;
-            absdiff(prev, transformed, dynamic_diff);
-
             Mat dynamic_diff_bw;
-            cvtColor(dynamic_diff, dynamic_diff_bw, COLOR_BGR2GRAY);
-            Mat dynamic_dilated = process(dynamic_diff_bw, 30);
+            // cvtColor(dynamic_diff, dynamic_diff_bw, COLOR_BGR2GRAY);
+            // absdiff(prev, transformed, dynamic_diff);
+            // cout<<prev.size();
+            // cout<<transformed.size();
+            // cout<<empty_road_transformed.size();
+
+            psubtr->apply(transformed,dynamic_diff,-0.4);
+            stringstream ss;
+            ss << cap.get(CAP_PROP_POS_FRAMES);
+            string frameNumberString = ss.str();
+            putText(transformed, frameNumberString.c_str(), cv::Point(15, 15),
+                FONT_HERSHEY_SIMPLEX, 0.5 , cv::Scalar(0,0,0));
+            // dynamic_diff = prev;
+            Mat dynamic_dilated = process(dynamic_diff, 5);
+            // psubtr->apply(transformed,empty_road_transformed);
 
             float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
             dynamic_density.push_back(d_density);
-            // imshow("Frame", dynamic_dilated);
+            // imshow("trans", transformed);
+            // imshow("prev", dynamic_dilated);
+            // prev = transformed;
+
+            // imshow("Frame", dynamic_diff);
         }
         ch = true;
 
@@ -98,7 +120,6 @@ int main(){
         // Display the resulting frame
         // imshow( "Frame", dilated );
 
-        prev = transformed;
 
         // Press  ESC on keyboard to exit
         char c=(char)waitKey(25);

@@ -9,7 +9,7 @@ int main(){
     if (gnuplotPipe) {   // If gnuplot is found
 
         fprintf(gnuplotPipe, "reset\n"); //gnuplot commands
-        // fprintf(gnuplotPipe, "set terminal postscript enhanced color\n");
+        fprintf(gnuplotPipe, "set terminal postscript enhanced color\n");
         // fprintf(gnuplotPipe, "n='500'\n");
         // fprintf(gnuplotPipe, "max='1500'\n");
         // fprintf(gnuplotPipe, "min='-1500\n");
