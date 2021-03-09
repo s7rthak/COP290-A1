@@ -14,7 +14,7 @@ Mat process(Mat img, int th){
     morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
     morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
     Mat dilated;
-    dilate(opening, dilated, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    dilate(opening, dilated, Mat(), Point(-1, -1), 2, 1, 1);
     return dilated;
 }
 
