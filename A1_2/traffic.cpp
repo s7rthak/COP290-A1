@@ -96,11 +96,6 @@ int main(int argc, char* argv[]){
             Mat dynamic_diff_bw;
 
             psubtr->apply(transformed, dynamic_diff,-0.4);
-            // stringstream ss;
-            // ss << cap.get(CAP_PROP_POS_FRAMES);
-            // string frameNumberString = ss.str();
-            // putText(transformed, frameNumberString.c_str(), cv::Point(15, 15),
-            //     FONT_HERSHEY_SIMPLEX, 0.5 , cv::Scalar(0,0,0));
             Mat dynamic_dilated = process(dynamic_diff, 5);
 
             float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
