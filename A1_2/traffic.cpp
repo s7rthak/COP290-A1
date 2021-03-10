@@ -7,20 +7,46 @@ using namespace cv;
 using namespace std;
 using namespace boost::program_options;
 
+// This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th){
     Mat processing;
-    threshold(img, processing, th, 255, THRESH_BINARY);
-    Mat closing, opening;
-    morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
-    morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    threshold(img, processing, th, 255, THRESH_BINARY); // Thresholding to obtain binary greyscale image.
+    Mat closing, opening; // Now, we do closing (random 'noise' or white spots removal through filter) and opening (removal of black spots inside white object).
+    morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1); // Morphology transformation 
+    morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1); 
     Mat dilated;
-    dilate(opening, dilated, Mat(), Point(-1, -1), 2, 1, 1);
+    dilate(opening, dilated, Mat(), Point(-1, -1), 2, 1, 1); // Dilation is to extend the white spots to form edges for clarity.
     return dilated;
 }
 
-int main(){
-    string traffic_video = "trafficvideo.mp4";
-    VideoCapture cap(traffic_video);
+int main(int argc, char* argv[]){
+
+    try
+    {
+    
+        options_description desc("Allowed options"); // Wrapper to store various arguments
+        desc.add_options() // Add in the needed/optional arguments
+            ("help,h", "No arguments needed! Just make sure you have the \'trafficvideo.mp4\' and \'empty.jpg\' in the same directory before running this program.");
+    
+        variables_map vm{}; // Map from key to values for arguments
+        store(parse_command_line(argc, argv, desc), vm); // Parse the command line arguments
+        notify(vm);
+    
+        if (vm.count("help"))
+        {
+            cout << desc << "\n";
+            return 1;
+        }
+    }
+
+    catch(boost::program_options::error& e)
+    {
+        cout << "Invalid command! Please use the -h option to see available arguments\n";
+        return 0;
+    }
+
+    string traffic_video = "trafficvideo.mp4"; 
+    VideoCapture cap(traffic_video); // Opening the video file.
 
     vector<Point2f> src; 
     src.push_back( Point2f(974, 217) ); src.push_back( Point2f(378, 973) ); src.push_back( Point2f(1523, 971) ); src.push_back( Point2f(1272, 209) );
@@ -38,79 +64,63 @@ int main(){
     bool ch = false;
 
     string empty_rd = "empty.jpg";
-    Mat empty_road = imread(empty_rd);
+    Mat empty_road = imread(empty_rd); // Empty road matrix
     Mat empty_road_transformed = perspective_transform(src, dest, crop_sz, empty_road);
-    // Mat empty_road_transformed = perspective_transform(src, dest, focus_sz, empty_road);
 
     vector<float> queue_density;
     vector<float> time;
     vector<float> dynamic_density;
 
     int count = 0;
-
+    Ptr<BackgroundSubtractor> psubtr;
+    psubtr= createBackgroundSubtractorMOG2(); // Background subtraction using the a pre-wriiten algorithm in opencv.
     while(1){
 
         Mat frame;
-        // Capture frame-by-frame
         cap >> frame;
     
-        // If the frame is empty, break immediately
         if (frame.empty())
         break;
 
-
-
         Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-        // Mat transformed = perspective_transform(src, dest, focus_sz, frame);
         Mat static_diff;
-        absdiff(empty_road_transformed, transformed, static_diff);
+        absdiff(empty_road_transformed, transformed, static_diff); // Difference between images
 
         Mat static_diff_bw;
-        cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY);
+        cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
         Mat dilated = process(static_diff_bw, 35);
+        
 
         if(ch){
             Mat dynamic_diff;
-            absdiff(prev, transformed, dynamic_diff);
-
             Mat dynamic_diff_bw;
-            cvtColor(dynamic_diff, dynamic_diff_bw, COLOR_BGR2GRAY);
-            Mat dynamic_dilated = process(dynamic_diff_bw, 30);
+
+            psubtr->apply(transformed, dynamic_diff,-0.4);
+            // stringstream ss;
+            // ss << cap.get(CAP_PROP_POS_FRAMES);
+            // string frameNumberString = ss.str();
+            // putText(transformed, frameNumberString.c_str(), cv::Point(15, 15),
+            //     FONT_HERSHEY_SIMPLEX, 0.5 , cv::Scalar(0,0,0));
+            Mat dynamic_dilated = process(dynamic_diff, 5);
 
             float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
             dynamic_density.push_back(d_density);
-            // imshow("Frame", dynamic_dilated);
         }
+
         ch = true;
-
-        // Rect focus_region(114, 202, 344, 606);
-        // Mat focus_img = dilated(focus_img);
-
-
-        // float q_density = countNonZero(focus_img)*1.0/(focus_img.rows*focus_img.cols);
-        // queue_density.push_back(q_density);
-        float q_density = countNonZero(dilated)*1.0/(dilated.rows*dilated.cols);
+        float q_density = countNonZero(dilated)*1.0/(dilated.rows*dilated.cols); // Measure density
         queue_density.push_back(q_density);
 
         count++;
         time.push_back(count*1.0/15);
 
-        // Display the resulting frame
-        // imshow( "Frame", dilated );
-
-        prev = transformed;
-
-        // Press  ESC on keyboard to exit
         char c=(char)waitKey(25);
         if(c==27)
         break;
     }
  
-    // When everything done, release the video capture object
     cap.release();
-
-    // Closes all the frames
-    cv::destroyAllWindows();
+    cv::destroyAllWindows(); // Destroy frames after use.
 
     cout<<"Time, Queue-Density\n";
     for(int i=1;i<queue_density.size();i++){

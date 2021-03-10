@@ -40,7 +40,6 @@ int main(){
     string empty_rd = "empty.jpg";
     Mat empty_road = imread(empty_rd);
     Mat empty_road_transformed = perspective_transform(src, dest, crop_sz, empty_road);
-    // Mat empty_road_transformed = perspective_transform(src, dest, focus_sz, empty_road);
 
     vector<float> queue_density;
     vector<float> time;
@@ -91,8 +90,6 @@ int main(){
         time.push_back(count*1.0/15);
     }
     cap.release();
-
-    // Closes all the frames
     cv::destroyAllWindows();
 
     cout<<"Time, Queue-Density\n";
