@@ -117,9 +117,9 @@ int main(int argc, char* argv[]){
     cap.release();
     cv::destroyAllWindows(); // Destroy frames after use.
 
-    cout<<"Time, Queue-Density\n";
+    cout<<"Time, Queue-Density, Frame_num\n";
     for(int i=1;i<queue_density.size();i++){
-        cout<<time[i]<<", "<<queue_density[i]<<", "<<dynamic_density[i-1]<<"\n";
+        cout<<time[i]<<", "<<queue_density[i]<<", "<<dynamic_density[i-1]<<", "<<round(time[i]*15)<<"\n";
     }
         
     return 0;
