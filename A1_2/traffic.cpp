@@ -1,6 +1,7 @@
 #include <opencv4/opencv2/opencv.hpp> 
 #include <iostream>
 #include <boost/program_options.hpp>
+#include <boost/filesystem.hpp>
 #include "perspective.hpp"
 
 using namespace cv;
@@ -21,12 +22,16 @@ Mat process(Mat img, int th){
 
 int main(int argc, char* argv[]){
 
+
+    string vid, emp;
     try
     {
-    
+        
         options_description desc("Allowed options"); // Wrapper to store various arguments
         desc.add_options() // Add in the needed/optional arguments
-            ("help,h", "No arguments needed! Just make sure you have the \'trafficvideo.mp4\' and \'empty.jpg\' in the same directory before running this program.");
+            ("help,h", "No arguments needed! Just make sure you have the \'trafficvideo.mp4\' and \'empty.jpg\' in the same directory before running this program.")
+            ("video,v",value<string>(&vid)->default_value("trafficvideo.mp4"), "The video file containing footage of traffic at an intersection.")
+            ("empty,e",value<string>(&emp)->default_value("empty.jpg"), "The empty image not containing any vehicle that acts as background.");
     
         variables_map vm{}; // Map from key to values for arguments
         store(parse_command_line(argc, argv, desc), vm); // Parse the command line arguments
@@ -37,6 +42,12 @@ int main(int argc, char* argv[]){
             cout << desc << "\n";
             return 1;
         }
+        vid = vm["video"].as<string>();
+        emp = vm["empty"].as<string>();
+        if(!(boost::filesystem::exists(vid) && boost::filesystem::exists(emp))){
+            cout<<"ya";
+            throw invalid_argument("Argument file not found. Use -h option");
+        }
     }
 
     catch(boost::program_options::error& e)
@@ -45,7 +56,7 @@ int main(int argc, char* argv[]){
         return 0;
     }
 
-    string traffic_video = "trafficvideo.mp4"; 
+    string traffic_video = vid; 
     VideoCapture cap(traffic_video); // Opening the video file.
 
     vector<Point2f> src; 
@@ -63,7 +74,7 @@ int main(int argc, char* argv[]){
     Mat prev;
     bool ch = false;
 
-    string empty_rd = "empty.jpg";
+    string empty_rd = emp;
     Mat empty_road = imread(empty_rd); // Empty road matrix
     Mat empty_road_transformed = perspective_transform(src, dest, crop_sz, empty_road);
 

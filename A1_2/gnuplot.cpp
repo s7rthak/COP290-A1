@@ -14,6 +14,7 @@ int main(){
         // fprintf(gnuplotPipe, "set xtics min,(max-min)/5,max\n");
         fprintf(gnuplotPipe, "set term push\n");
         fprintf(gnuplotPipe, "set term png\n");
+        fprintf(gnuplotPipe, "set term png size 1400,1000\n");
         fprintf(gnuplotPipe, "set output 'line-graph.png'\n");
         fprintf(gnuplotPipe, "set termoption lw 1.5\n");
         fprintf(gnuplotPipe, "set key right top\n");
@@ -27,7 +28,7 @@ int main(){
         fprintf(gnuplotPipe, "set arrow from 352,0 to 352,1 nohead lc rgb 'red' lw 2 dt 2\n");
         fprintf(gnuplotPipe, "plot './plot.txt' using 1:2 with lines title 'Queue Density' lt rgb 'dark-violet' lw 1.5, './plot.txt' using 1:3 with lines title 'Moving Density' lt rgb 'coral' lw 1.5\n");
         fprintf(gnuplotPipe, "set term pop\n");
-        fprintf(gnuplotPipe, "set term qt size 1200,1000\n");
+        fprintf(gnuplotPipe, "set term qt size 1400,1000\n");
         fprintf(gnuplotPipe, "set output\n");
         fprintf(gnuplotPipe, "replot\n");
 

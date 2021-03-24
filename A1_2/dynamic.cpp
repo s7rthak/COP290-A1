@@ -11,10 +11,10 @@ Mat process(Mat img, int th){
     Mat processing;
     threshold(img, processing, th, 255, THRESH_BINARY);
     Mat closing, opening;
-    morphologyEx(processing, closing, MORPH_CLOSE, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
-    morphologyEx(closing, opening, MORPH_OPEN, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    morphologyEx(processing, closing, MORPH_CLOSE, MORPH_CROSS, Point(-1, -1), 2, 1, 1);
+    morphologyEx(closing, opening, MORPH_OPEN, MORPH_CROSS, Point(-1, -1), 2, 1, 1);
     Mat dilated;
-    dilate(opening, dilated, MORPH_ELLIPSE, Point(-1, -1), 2, 1, 1);
+    dilate(opening, dilated, MORPH_CROSS, Point(-1, -1), 2, 1, 1);
     return dilated;
 }
 
@@ -60,7 +60,8 @@ int main(){
         Mat transformed = perspective_transform(src, dest, crop_sz, frame2);
         cvtColor(transformed, next, COLOR_BGR2GRAY);
         Mat flow(prvs.size(), CV_32FC2);
-        calcOpticalFlowFarneback(prvs, next, flow, 0.5, 3, 15, 3, 5, 1.2, 0);
+        calcOpticalFlowFarneback(prvs, next, flow, 0.5, 5, 50, 5, 7, 1.7, 0);
+        // calcOpticalFlowFarneback()
         // visualization
         Mat flow_parts[2];
         split(flow, flow_parts);
@@ -78,7 +79,7 @@ int main(){
         cvtColor(hsv8, bgr, COLOR_HSV2BGR);
         Mat black_white;
         cvtColor(bgr, black_white, COLOR_BGR2GRAY);
-        black_white = process(black_white, 20);
+        black_white = process(black_white, 35);
         float d_density = countNonZero(black_white)*1.0/(black_white.rows*black_white.cols);
         dynamic_density.push_back(d_density);
         imshow("frame2", black_white);
