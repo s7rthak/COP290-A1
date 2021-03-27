@@ -65,31 +65,20 @@ struct frame_info {
     vector<float> tqd;
     vector<float> th_time;
     int threadid;
+    int numthread;
 };
 
 void *find_density(void *frameinfo)
 {   
     struct frame_info *info;
     info = (struct frame_info *) frameinfo ;
-    int count =0;
+    int count = info->threadid * frames.size()*1.0/info->numthread*1.0;
+    int last = (info->threadid+1) * frames.size()*1.0/info->numthread*1.0;
     cout<<info->threadid<<"----000----"<<endl;
-    // string vd = format("trafficvideo%d.mp4",info->threadid+1);
-    // VideoCapture cap(vd);
-
-    // cout<<vd<<endl;
-    // cout<<info->threadid<<"----1111111----"<<vd<<endl;
-
-    while (count!=frames.size())
+    while (count!=last)
     {
         Mat frame;
         frame = frames[count];
-        // double prev_time =-1.0;
-        // cout<<info->threadid<<"---22222222222-----"<<endl;
-        // if (isEqual(info->frame ,info->prev_frame)){
-        //     continue;
-        // }
-        // cout<<info->threadid<<"---3333-----"<<endl;
-        // if(count == 128) break;
         if(frame.empty())
             {cout<<"breaked"<<endl;
             break;}
@@ -100,7 +89,7 @@ void *find_density(void *frameinfo)
         
         // Mat transformed = perspective_transform(src, dest, crop_sz, frame);
         // Mat static_diff;
-        absdiff(info->empty_road_transformed, transformed(info->mysplit), static_diff); // Difference between images
+        absdiff(info->empty_road_transformed, transformed, static_diff); // Difference between images
 
         Mat static_diff_bw;
         cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
@@ -109,7 +98,7 @@ void *find_density(void *frameinfo)
         // ch = true;
         float q_density = countNonZero(dilated) * 1.0 / (dilated.rows * dilated.cols); // Measure density
         info->tqd.push_back(q_density);
-        cout<<info->threadid<<" td= "<<q_density<<endl;
+        cout<<"frame : "<<count<<info->threadid<<" td= "<<q_density<<endl;
         // cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
         count++;
         info->th_time.push_back(count * 1.0 / 15);
@@ -163,20 +152,6 @@ int main(int argc, char *argv[])
     }
     int NUM_THREADS = stoi(argv[1]);
     string traffic_video = vid;
-    // VideoCapture cap;
-    // Mat fr1;
-    // object capp[NUM_THREADS];
-    // for(int i = 0; i <NUM_THREADS;i++){
-    //     // VideoCapture cap(traffic_video);
-    //     capp[i] = cap(traffic_video);
-    //     capp[i] >> fr1;
-    //     imshow(format("capp%d",i),fr1);
-    // }
-    // VideoCapture cap(traffic_video); // Opening the video file.
-    // Mat fr1;
-    // capp[0] >>fr1;
-    // imshow("cap1",fr1);
-    // waitKey(0);
     VideoCapture cap(traffic_video);
     cout<<traffic_video<<endl;
     int index=0;
@@ -231,60 +206,31 @@ int main(int argc, char *argv[])
     Ptr<BackgroundSubtractor> psubtr;
     psubtr = createBackgroundSubtractorMOG2(); // Background subtraction using the a pre-wriiten algorithm in opencv.
     // Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-    int width = empty_road_transformed.cols;
-    int height = empty_road_transformed.rows;
-    float gridwidth = width*1.0/sqrtf(NUM_THREADS);
-    float gridheight = height*1.0 /sqrtf(NUM_THREADS);
-    float stripheight = height*1.0/NUM_THREADS;
-    vector<Rect> splits;
-    pthread_t threads[NUM_THREADS];
     struct frame_info split[NUM_THREADS];
+    pthread_t threads[NUM_THREADS];
     vector<float> thread_time[NUM_THREADS];
     vector<float> thread_density[NUM_THREADS];
-    int tid = 0 ;
-    float q_d =0.0;
-    // cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<endl;
-    for(int y =0;y < height  ;y+=gridheight ){
-        for(int x =0; x < width;x+=gridwidth){
-            // int k = x*y + x;
-            cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<" "<<x<<" "<<y<<endl;
-            Rect grid_rect (x,y,gridwidth,gridheight);
-            // cout << grid_rect<<endl;
-            splits.push_back(grid_rect);
-            // rectangle(frame,grid_rect,Scalar(0,255,0),1);
-            // imshow("frame",frame);
-            // imshow(format("grid-%d , %d",x, y),transformed(grid_rect));
-            // waitKey(0);
-        }
-    }
     cout<<"fffffffffffff"<<endl;
     // VideoCapture cap(traffic_video);
-    for(tid = 0;tid<NUM_THREADS;tid++){
-        // imshow(format("thread_frame-%d",tid),frame(splits[tid]));
-        // waitKey(0);
-        // split[tid].transformed = transformed(splits[tid]);
-        split[tid].empty_road_transformed = empty_road_transformed(splits[tid]);
+    for(int tid = 0;tid<NUM_THREADS;tid++){
+        split[tid].empty_road_transformed = empty_road_transformed;
         split[tid].threadid = tid;
         
         // split[tid].cap1 = cap;
         split[tid].tqd = thread_density[tid];
         split[tid].th_time = thread_time[tid];
-        split[tid].mysplit = splits[tid];
+        // split[tid].mysplit = splits[tid];
         split[tid].src = src;
         split[tid].dest = dest;
         split[tid].crop_sz = crop_sz;
+        split[tid].numthread = NUM_THREADS;
         int tc = pthread_create(&threads[tid], NULL,find_density,(void *)&split[tid]);
         if(tc){
             cout<<"ERROR thread not created : "<<tid<<endl;
             exit(-1);
         }
         cout<<"thread created : "<<tid<<endl;
-        // q_d +=split[tid].qd;
-        // cout<<"q_________d = "<<q_d<<endl;
     }
-    // pthread_t capture;
-    // int cc = pthread_create(&capture, NULL,allot,(void *)&split);
-    // Mat frame;
     cout<<"here"<<endl;
     // while(1){
     //     Mat frame;
@@ -312,14 +258,5 @@ int main(int argc, char *argv[])
                     cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
         }
     }
-    // for(int count=0;count<thread_queue_density.size();count++){
-    //     cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
-    // }
-    cout << "Time, Queue-Density, Frame_num"<<endl;
-    // for (int i = 1; i < queue_density.size(); i++)
-    // {
-    //     cout << time[i] << ", " << queue_density[i] << ", " << dynamic_density[i - 1] << ", " << round(time[i] * 15) << "\n";
-    // }
-
     return 0;
 }
