@@ -15,7 +15,7 @@ using namespace boost::program_options;
 vector<float> queue_density;
 vector<pair<int, float> > thread_queue_density;
 vector<float> dynamic_density;
-vector<Mat> frames;
+vector<Mat> frames; 
 // This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th)
 {
@@ -75,7 +75,7 @@ void *find_density(void *frameinfo)
     int count = info->threadid * frames.size()*1.0/info->numthread*1.0;
     int last = (info->threadid+1) * frames.size()*1.0/info->numthread*1.0;
     cout<<info->threadid<<"----000----"<<endl;
-    while (count!=last)
+    while (count!=last || count < last)
     {
         Mat frame;
         frame = frames[count];
@@ -151,6 +151,7 @@ int main(int argc, char *argv[])
         return 0;
     }
     int NUM_THREADS = stoi(argv[1]);
+    int fps = 15.0/stol(argv[2]);
     string traffic_video = vid;
     VideoCapture cap(traffic_video);
     cout<<traffic_video<<endl;
@@ -166,7 +167,7 @@ int main(int argc, char *argv[])
         }
         // imwrite(format("\\frames\\frame%d.jpg",index),frame);
         // int index = cap.get(CV_CAP_POS_FRAMES);
-        if(index%5==0) {frames.push_back(frame);}
+        if(index%fps==0) {frames.push_back(frame);}
         index++;
     }
     std::vector<cv::Point2f> src;

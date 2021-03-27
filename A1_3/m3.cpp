@@ -177,6 +177,7 @@ int main(int argc, char *argv[])
     // capp[0] >>fr1;
     // imshow("cap1",fr1);
     // waitKey(0);
+    int fps = 15.0/stol(argv[2]);
     VideoCapture cap(traffic_video);
     cout<<traffic_video<<endl;
     int index=0;
@@ -191,7 +192,7 @@ int main(int argc, char *argv[])
         }
         //imwrite(format("\\frames\\frame%d.jpg",index),frame);
         // int index = cap.get(CV_CAP_POS_FRAMES);
-        if(index%5==0) {frames.push_back(frame);}
+        if(index%fps==0) {frames.push_back(frame);}
         index++;
     }
     std::vector<cv::Point2f> src;
@@ -233,9 +234,6 @@ int main(int argc, char *argv[])
     // Mat transformed = perspective_transform(src, dest, crop_sz, frame);
     int width = empty_road_transformed.cols;
     int height = empty_road_transformed.rows;
-    float gridwidth = width*1.0/sqrtf(NUM_THREADS);
-    float gridheight = height*1.0 /sqrtf(NUM_THREADS);
-    float stripheight = height*1.0/NUM_THREADS;
     vector<Rect> splits;
     pthread_t threads[NUM_THREADS];
     struct frame_info split[NUM_THREADS];
@@ -244,17 +242,30 @@ int main(int argc, char *argv[])
     int tid = 0 ;
     float q_d =0.0;
     // cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<endl;
-    for(int y =0;y < height  ;y+=gridheight ){
-        for(int x =0; x < width;x+=gridwidth){
-            // int k = x*y + x;
-            cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<" "<<x<<" "<<y<<endl;
-            Rect grid_rect (x,y,gridwidth,gridheight);
-            // cout << grid_rect<<endl;
-            splits.push_back(grid_rect);
-            // rectangle(frame,grid_rect,Scalar(0,255,0),1);
-            // imshow("frame",frame);
-            // imshow(format("grid-%d , %d",x, y),transformed(grid_rect));
-            // waitKey(0);
+    if(NUM_THREADS !=1 || NUM_THREADS != 4 || NUM_THREADS !=9 || NUM_THREADS !=16){
+        float stripheight = height*1.0/NUM_THREADS;
+        for(int h=0;h<height; h+=stripheight){
+            Rect strip_rect(0,h,width,stripheight);
+            splits.push_back(strip_rect);
+            imshow(format("strip%d",h),frames[0](strip_rect));
+            waitKey(0);
+        }
+    }
+    else{
+        float gridwidth = width*1.0/sqrtf(NUM_THREADS);
+        float gridheight = height*1.0 /sqrtf(NUM_THREADS);
+        for(int y =0;y < height  ;y+=gridheight ){
+            for(int x =0; x < width;x+=gridwidth){
+                // int k = x*y + x;
+                cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<" "<<x<<" "<<y<<endl;
+                Rect grid_rect (x,y,gridwidth,gridheight);
+                // cout << grid_rect<<endl;
+                splits.push_back(grid_rect);
+                // rectangle(frame,grid_rect,Scalar(0,255,0),1);
+                // imshow("frame",frame);
+                // imshow(format("grid-%d , %d",x, y),transformed(grid_rect));
+                // waitKey(0);
+            }
         }
     }
     cout<<"fffffffffffff"<<endl;
