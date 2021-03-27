@@ -189,7 +189,7 @@ int main(int argc, char *argv[])
             cout<<"file end Breaked"<<endl;
             break;
         }
-        // imwrite(format("\\frames\\frame%d.jpg",index),frame);
+        //imwrite(format("\\frames\\frame%d.jpg",index),frame);
         // int index = cap.get(CV_CAP_POS_FRAMES);
         if(index%5==0) {frames.push_back(frame);}
         index++;
