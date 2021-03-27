@@ -4,6 +4,7 @@
 #include <boost/filesystem.hpp>
 #include "perspective.hpp"
 #include <utility>
+#include <vector>
 // #include <X11/Xlib.h>
 // #define NUM_THREADS 12
 
@@ -14,7 +15,7 @@ using namespace boost::program_options;
 vector<float> queue_density;
 vector<pair<int, float> > thread_queue_density;
 vector<float> dynamic_density;
-vector<cv::Mat> vid;
+vector<Mat> frames;
 // This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th)
 {
@@ -72,15 +73,16 @@ void *find_density(void *frameinfo)
     info = (struct frame_info *) frameinfo ;
     int count =0;
     cout<<info->threadid<<"----000----"<<endl;
-    string vd = format("trafficvideo%d.mp4",info->threadid+1);
-    VideoCapture cap(vd);
-    cout<<vd<<endl;
-    cout<<info->threadid<<"----1111111----"<<vd<<endl;
+    // string vd = format("trafficvideo%d.mp4",info->threadid+1);
+    // VideoCapture cap(vd);
 
-    while (1)
+    // cout<<vd<<endl;
+    // cout<<info->threadid<<"----1111111----"<<vd<<endl;
+
+    while (count!=frames.size())
     {
         Mat frame;
-        cap >>frame;
+        frame = frames[count];
         // double prev_time =-1.0;
         // cout<<info->threadid<<"---22222222222-----"<<endl;
         // if (isEqual(info->frame ,info->prev_frame)){
@@ -107,7 +109,7 @@ void *find_density(void *frameinfo)
         // ch = true;
         float q_density = countNonZero(dilated) * 1.0 / (dilated.rows * dilated.cols); // Measure density
         info->tqd.push_back(q_density);
-        // cout<<info->threadid<<" td= "<<q_density<<endl;
+        cout<<info->threadid<<" td= "<<q_density<<endl;
         // cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
         count++;
         info->th_time.push_back(count * 1.0 / 15);
@@ -162,7 +164,7 @@ int main(int argc, char *argv[])
     int NUM_THREADS = stoi(argv[1]);
     string traffic_video = vid;
     // VideoCapture cap;
-    Mat fr1;
+    // Mat fr1;
     // object capp[NUM_THREADS];
     // for(int i = 0; i <NUM_THREADS;i++){
     //     // VideoCapture cap(traffic_video);
@@ -175,6 +177,23 @@ int main(int argc, char *argv[])
     // capp[0] >>fr1;
     // imshow("cap1",fr1);
     // waitKey(0);
+    VideoCapture cap(traffic_video);
+    cout<<traffic_video<<endl;
+    int index=0;
+    while(1){
+        Mat frame;
+        bool f = cap.read(frame);
+        
+        // waitKey(0);
+        if(f==false){
+            cout<<"file end Breaked"<<endl;
+            break;
+        }
+        imwrite(format("\\frames\\frame%d.jpg",index),frame);
+        // int index = cap.get(CV_CAP_POS_FRAMES);
+        if(index%5==0) {frames.push_back(frame);}
+        index++;
+    }
     std::vector<cv::Point2f> src;
     src.push_back(Point2f(974, 217));
     src.push_back(Point2f(378, 973));
@@ -239,7 +258,7 @@ int main(int argc, char *argv[])
         }
     }
     cout<<"fffffffffffff"<<endl;
-    VideoCapture cap(traffic_video);
+    // VideoCapture cap(traffic_video);
     for(tid = 0;tid<NUM_THREADS;tid++){
         // imshow(format("thread_frame-%d",tid),frame(splits[tid]));
         // waitKey(0);
@@ -281,13 +300,16 @@ int main(int argc, char *argv[])
     // pthread_exit(NULL);
     // capp.release();
     for(int i = 0; i <NUM_THREADS;i++){
+        cout<<"Thread joined"<<endl;
         pthread_join(threads[i],NULL);
     }
     cv::destroyAllWindows(); // Destroy frames after use.
     cout << "Time, Queue-Density, Frame_num"<<endl;
+    // vector<float> tqd;
+    // vector<float> th_time;
     for(int k=0; k<NUM_THREADS;k++){
-        for(int i =0;i<thread_density[k].size();i++){
-                    cout << thread_time[k][i] << ", " << thread_density[k][i] << ", "<< round(thread_time[k][i] * 15) << endl;;
+        for(int i =0;i<split[k].tqd.size();i++){
+                    cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
         }
     }
     // for(int count=0;count<thread_queue_density.size();count++){
