@@ -22,7 +22,7 @@ Mat process(Mat img, int th){
 
 int main(int argc, char* argv[]){
 
-    int w, h;
+    int w, g;
     string vid, emp;
     try
     {
@@ -33,7 +33,7 @@ int main(int argc, char* argv[]){
             ("video,v",value<string>(&vid)->default_value("trafficvideo.mp4"), "The video file containing footage of traffic at an intersection.")
             ("empty,e",value<string>(&emp)->default_value("empty.jpg"), "The empty image not containing any vehicle that acts as background.")
             ("width,w",value<int>(&w)->default_value(800), "Reduced resoultion width.")
-            ("height,h",value<int>(&h)->default_value(600), "Reduced resolution height.");
+            ("height,g",value<int>(&g)->default_value(600), "Reduced resolution height.");
     
         variables_map vm{}; // Map from key to values for arguments
         store(parse_command_line(argc, argv, desc), vm); // Parse the command line arguments
@@ -47,7 +47,7 @@ int main(int argc, char* argv[]){
         vid = vm["video"].as<string>();
         emp = vm["empty"].as<string>();
         w = vm["width"].as<int>();
-        h = vm["height"].as<int>();
+        g = vm["height"].as<int>();
         if(!(boost::filesystem::exists(vid) && boost::filesystem::exists(emp))){
             cout<<"ya";
             throw invalid_argument("Argument file not found. Use -h option");
@@ -63,19 +63,19 @@ int main(int argc, char* argv[]){
     string traffic_video = vid; 
     VideoCapture cap(traffic_video); // Opening the video file.
     cap.set(CAP_PROP_FRAME_WIDTH, w);
-    cap.set(CAP_PROP_FRAME_HEIGHT, h);
+    cap.set(CAP_PROP_FRAME_HEIGHT, g);
 
     vector<Point2f> src; 
-    src.push_back( Point2f(974, 217) ); src.push_back( Point2f(378, 973) ); src.push_back( Point2f(1523, 971) ); src.push_back( Point2f(1272, 209) );
+    src.push_back( Point2f(round(974 * w * 1.0/1920), round(217 * g * 1.0/1080)) ); src.push_back( Point2f(round(378 * w * 1.0/1920), round(973 * g * 1.0/1080)) ); src.push_back( Point2f(round(1523 * w * 1.0/1920), round(971 * g * 1.0/1080)) ); src.push_back( Point2f(round(1272 * w * 1.0/1920), round(209 * g * 1.0/1080)) );
 
     vector<Point2f> dest; 
-    dest.push_back( Point2f(472, 52) ); dest.push_back( Point2f(472, 830) ); dest.push_back( Point2f(800, 830) ); dest.push_back( Point2f(800,52) );
+    dest.push_back( Point2f(round(472 * w * 1.0/1920), round(52 * g * 1.0/1080)) ); dest.push_back( Point2f(round(472 * w * 1.0/1920), round(830 * g * 1.0/1080)) ); dest.push_back( Point2f(round(800 * w * 1.0/1920), round(830 * g * 1.0/1080)) ); dest.push_back( Point2f(round(800 * w * 1.0/1920), round(52 * g * 1.0/1080)) );
 
     vector<int> crop_sz;
-    crop_sz.push_back(372); crop_sz.push_back(52); crop_sz.push_back(458); crop_sz.push_back(808);
+    crop_sz.push_back(round(372 * w * 1.0/1920)); crop_sz.push_back(round(52 * g * 1.0/1080)); crop_sz.push_back(round(458 * w * 1.0/1920)); crop_sz.push_back(round(808 * g * 1.0/1080));
 
-    vector<int> focus_sz;
-    focus_sz.push_back(486); focus_sz.push_back(254); crop_sz.push_back(344); crop_sz.push_back(606);
+    // vector<int> focus_sz;
+    // focus_sz.push_back(486); focus_sz.push_back(254); crop_sz.push_back(344); crop_sz.push_back(606);
 
     Mat prev;
     bool ch = false;
@@ -99,6 +99,7 @@ int main(int argc, char* argv[]){
         if (frame.empty())
         break;
 
+        resize(frame, frame, Size(w, g), 0, 0, INTER_CUBIC);
         Mat transformed = perspective_transform(src, dest, crop_sz, frame);
         Mat static_diff;
         absdiff(empty_road_transformed, transformed, static_diff); // Difference between images
@@ -106,7 +107,7 @@ int main(int argc, char* argv[]){
         Mat static_diff_bw;
         cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
         Mat dilated = process(static_diff_bw, 35);
-        
+        // imshow("frame", dilated);
 
         if(ch){
             Mat dynamic_diff;

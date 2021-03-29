@@ -16,6 +16,8 @@ vector<float> queue_density;
 vector<pair<int, float> > thread_queue_density;
 vector<float> dynamic_density;
 vector<Mat> frames; 
+pthread_mutex_t lok;
+
 // This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th)
 {
@@ -78,7 +80,9 @@ void *find_density(void *frameinfo)
     while (count!=last || count < last)
     {
         Mat frame;
+        pthread_mutex_lock(&lok);
         frame = frames[count];
+        pthread_mutex_unlock(&lok);
         if(frame.empty())
             {cout<<"breaked"<<endl;
             break;}
@@ -98,19 +102,17 @@ void *find_density(void *frameinfo)
         // ch = true;
         float q_density = countNonZero(dilated) * 1.0 / (dilated.rows * dilated.cols); // Measure density
         info->tqd.push_back(q_density);
-        cout<<"frame : "<<count<<info->threadid<<" td= "<<q_density<<endl;
+        // cout<<"frame : "<<count<<info->threadid<<" td= "<<q_density<<endl;
         // cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
         count++;
         info->th_time.push_back(count * 1.0 / 15);
         info->prev_frame = info->frame;
-        char c = (char)waitKey(25);
-        if (c == 27)
-            break;
+        // cout<<info->threadid<<" "<<count<<" "<<last<<"\n";
     }
     cout << "thread finished : "<<info->threadid << endl;
     // thread_queue_density.push_back(make_pair(info->threadid,q_density));
-    
-    pthread_exit(NULL);
+    // return NULL;
+    pthread_exit(0);
 }
 
 
@@ -213,6 +215,13 @@ int main(int argc, char *argv[])
     vector<float> thread_density[NUM_THREADS];
     cout<<"fffffffffffff"<<endl;
     // VideoCapture cap(traffic_video);
+    if (pthread_mutex_init(&lok, NULL) != 0) {
+        printf("\n mutex init has failed\n");
+        return 1;
+    }
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
     for(int tid = 0;tid<NUM_THREADS;tid++){
         split[tid].empty_road_transformed = empty_road_transformed;
         split[tid].threadid = tid;
@@ -225,14 +234,14 @@ int main(int argc, char *argv[])
         split[tid].dest = dest;
         split[tid].crop_sz = crop_sz;
         split[tid].numthread = NUM_THREADS;
-        int tc = pthread_create(&threads[tid], NULL,find_density,(void *)&split[tid]);
+        int tc = pthread_create(&threads[tid], &attr,find_density,(void *)&split[tid]);
         if(tc){
             cout<<"ERROR thread not created : "<<tid<<endl;
             exit(-1);
         }
         cout<<"thread created : "<<tid<<endl;
     }
-    cout<<"here"<<endl;
+    // cout<<"here"<<endl;
     // while(1){
     //     Mat frame;
     //     cap >> frame;
@@ -246,18 +255,20 @@ int main(int argc, char *argv[])
     // }
     // pthread_exit(NULL);
     // capp.release();
+    pthread_attr_destroy(&attr);
     for(int i = 0; i <NUM_THREADS;i++){
-        cout<<"Thread joined"<<endl;
+        cout<<"Thread joined "<<i<<endl;
         pthread_join(threads[i],NULL);
     }
-    cv::destroyAllWindows(); // Destroy frames after use.
-    cout << "Time, Queue-Density, Frame_num"<<endl;
+    pthread_mutex_destroy(&lok);
+    // cv::destroyAllWindows(); // Destroy frames after use.
+    // cout << "Time, Queue-Density, Frame_num"<<endl;
     // vector<float> tqd;
     // vector<float> th_time;
-    for(int k=0; k<NUM_THREADS;k++){
-        for(int i =0;i<split[k].tqd.size();i++){
-                    cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
-        }
-    }
+    // for(int k=0; k<NUM_THREADS;k++){
+    //     for(int i =0;i<split[k].tqd.size();i++){
+    //                 cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
+    //     }
+    // }
     return 0;
 }
