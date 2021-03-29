@@ -272,7 +272,7 @@ auto stop = high_resolution_clock::now();
 auto duration = duration_cast<microseconds>(stop - start);
 cv::destroyAllWindows(); // Destroy frames after use.
 cout << "Time, Queue-Density, Frame_num" << endl;
-cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
+
 // vector<float> tqd;
 // vector<float> th_time;
 for (int i = 0; i < frames.size(); i++)
@@ -290,6 +290,7 @@ for(int i=0;i<queue_density.size();i++)
 {
     cout << " frame no = "<<i<<" qd = "<<queue_density[i]<<endl;
 }
+cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
 // for(int count=0;count<thread_queue_density.size();count++){
 //     cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
 // }

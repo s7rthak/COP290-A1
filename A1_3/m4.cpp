@@ -232,7 +232,7 @@ int main(int argc, char *argv[])
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
     cv::destroyAllWindows(); // Destroy frames after use.'
-    cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
+    
     cout << "Time, Queue-Density, Frame_num"<<endl;
     // vector<float> tqd;
     // vector<float> th_time;
@@ -242,5 +242,6 @@ int main(int argc, char *argv[])
             cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
         }
     }
+    cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
     return 0;
 }
