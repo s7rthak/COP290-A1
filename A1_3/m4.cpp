@@ -16,6 +16,7 @@ vector<float> queue_density;
 vector<pair<int, float> > thread_queue_density;
 vector<float> dynamic_density;
 vector<Mat> frames; 
+pthread_mutex_t lok;
 // This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th)
 {
@@ -28,31 +29,7 @@ Mat process(Mat img, int th)
     dilate(opening, dilated, Mat(), Point(-1, -1), 2, 1, 1); // Dilation is to extend the white spots to form edges for clarity.
     return dilated;
 }
-bool isEqual(const cv::Mat Mat1, const cv::Mat Mat2)
-{
-  if( Mat1.dims == Mat2.dims && 
-    Mat1.size == Mat2.size && 
-    Mat1.elemSize() == Mat2.elemSize())
-  {
-    if( Mat1.isContinuous() && Mat2.isContinuous())
-    {
-      return 0==memcmp( Mat1.ptr(), Mat2.ptr(), Mat1.total()*Mat1.elemSize());
-    }
-    else
-    {
-      const cv::Mat* arrays[] = {&Mat1, &Mat2, 0};
-      uchar* ptrs[2];
-      cv::NAryMatIterator it( arrays, ptrs, 2);
-      for(unsigned int p = 0; p < it.nplanes; p++, ++it)
-        if( 0!=memcmp( it.ptrs[0], it.ptrs[1], it.size*Mat1.elemSize()) )
-          return false;
 
-      return true;
-    }
-  }
-
-  return false;
-}
 struct frame_info {
     Mat frame;
     Mat prev_frame;
@@ -72,13 +49,16 @@ void *find_density(void *frameinfo)
 {   
     struct frame_info *info;
     info = (struct frame_info *) frameinfo ;
-    int count = info->threadid * frames.size()*1.0/info->numthread*1.0;
-    int last = (info->threadid+1) * frames.size()*1.0/info->numthread*1.0;
+    int count = info->threadid;
+    // int count = info->threadid * frames.size()*1.0/info->numthread*1.0;
+    // int last = (info->threadid+1) * frames.size()*1.0/info->numthread*1.0;
     cout<<info->threadid<<"----000----"<<endl;
-    while (count!=last || count < last)
+    while (count != (int)frames.size() && count < (int)frames.size())
     {
         Mat frame;
+        pthread_mutex_lock(&lok);
         frame = frames[count];
+        pthread_mutex_unlock(&lok);
         if(frame.empty())
             {cout<<"breaked"<<endl;
             break;}
@@ -100,17 +80,14 @@ void *find_density(void *frameinfo)
         info->tqd.push_back(q_density);
         cout<<"frame : "<<count<<info->threadid<<" td= "<<q_density<<endl;
         // cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
-        count++;
+        count += info->numthread; //
         info->th_time.push_back(count * 1.0 / 15);
-        info->prev_frame = info->frame;
-        char c = (char)waitKey(25);
-        if (c == 27)
-            break;
+        // info->prev_frame = info->frame;
     }
     cout << "thread finished : "<<info->threadid << endl;
     // thread_queue_density.push_back(make_pair(info->threadid,q_density));
     
-    pthread_exit(NULL);
+    pthread_exit(0);
 }
 
 
@@ -202,6 +179,7 @@ int main(int argc, char *argv[])
     Mat empty_road_transformed = perspective_transform(src, dest, crop_sz, empty_road);
 
     vector<float> time;
+    auto start = high_resolution_clock::now();
 
     int count = 0;
     Ptr<BackgroundSubtractor> psubtr;
@@ -250,13 +228,18 @@ int main(int argc, char *argv[])
         cout<<"Thread joined"<<endl;
         pthread_join(threads[i],NULL);
     }
-    cv::destroyAllWindows(); // Destroy frames after use.
+    pthread_mutex_destroy(&lok);
+    auto stop = high_resolution_clock::now();
+    auto duration = duration_cast<microseconds>(stop - start);
+    cv::destroyAllWindows(); // Destroy frames after use.'
+    cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
     cout << "Time, Queue-Density, Frame_num"<<endl;
     // vector<float> tqd;
     // vector<float> th_time;
-    for(int k=0; k<NUM_THREADS;k++){
-        for(int i =0;i<split[k].tqd.size();i++){
-                    cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
+    
+    for(int i =0;i<frames.size()/NUM_THREADS * 1.0;i++){
+        for(int k=0; k<NUM_THREADS;k++){
+            cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
         }
     }
     return 0;
