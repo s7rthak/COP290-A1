@@ -22,7 +22,7 @@ Mat process(Mat img, int th){
 
 int main(int argc, char* argv[]){
 
-    int w, g;
+    int x;
     string vid, emp;
     try
     {
@@ -30,10 +30,9 @@ int main(int argc, char* argv[]){
         options_description desc("Allowed options"); // Wrapper to store various arguments
         desc.add_options() // Add in the needed/optional arguments
             ("help,h", "No arguments needed! Just make sure you have the \'trafficvideo.mp4\' and \'empty.jpg\' in the same directory before running this program.")
-            ("video,v",value<string>(&vid)->default_value("trafficvideo.mp4"), "The video file containing footage of traffic at an intersection.")
-            ("empty,e",value<string>(&emp)->default_value("empty.jpg"), "The empty image not containing any vehicle that acts as background.")
-            ("width,w",value<int>(&w)->default_value(800), "Reduced resoultion width.")
-            ("height,g",value<int>(&g)->default_value(600), "Reduced resolution height.");
+            ("video,v",value<string>(&vid)->default_value("../trafficvideo.mp4"), "The video file containing footage of traffic at an intersection.")
+            ("empty,e",value<string>(&emp)->default_value("../empty.jpg"), "The empty image not containing any vehicle that acts as background.")
+            ("skip,x", value<int>(&x), "Frames to skip (after each subtraction) to reduce computation.");
     
         variables_map vm{}; // Map from key to values for arguments
         store(parse_command_line(argc, argv, desc), vm); // Parse the command line arguments
@@ -46,8 +45,7 @@ int main(int argc, char* argv[]){
         }
         vid = vm["video"].as<string>();
         emp = vm["empty"].as<string>();
-        w = vm["width"].as<int>();
-        g = vm["height"].as<int>();
+        x = vm["skip"].as<int>();
         if(!(boost::filesystem::exists(vid) && boost::filesystem::exists(emp))){
             cout<<"ya";
             throw invalid_argument("Argument file not found. Use -h option");
@@ -62,20 +60,18 @@ int main(int argc, char* argv[]){
 
     string traffic_video = vid; 
     VideoCapture cap(traffic_video); // Opening the video file.
-    cap.set(CAP_PROP_FRAME_WIDTH, w);
-    cap.set(CAP_PROP_FRAME_HEIGHT, g);
 
     vector<Point2f> src; 
-    src.push_back( Point2f(round(974 * w * 1.0/1920), round(217 * g * 1.0/1080)) ); src.push_back( Point2f(round(378 * w * 1.0/1920), round(973 * g * 1.0/1080)) ); src.push_back( Point2f(round(1523 * w * 1.0/1920), round(971 * g * 1.0/1080)) ); src.push_back( Point2f(round(1272 * w * 1.0/1920), round(209 * g * 1.0/1080)) );
+    src.push_back( Point2f(974, 217) ); src.push_back( Point2f(378, 973) ); src.push_back( Point2f(1523, 971) ); src.push_back( Point2f(1272, 209) );
 
     vector<Point2f> dest; 
-    dest.push_back( Point2f(round(472 * w * 1.0/1920), round(52 * g * 1.0/1080)) ); dest.push_back( Point2f(round(472 * w * 1.0/1920), round(830 * g * 1.0/1080)) ); dest.push_back( Point2f(round(800 * w * 1.0/1920), round(830 * g * 1.0/1080)) ); dest.push_back( Point2f(round(800 * w * 1.0/1920), round(52 * g * 1.0/1080)) );
+    dest.push_back( Point2f(472, 52) ); dest.push_back( Point2f(472, 830) ); dest.push_back( Point2f(800, 830) ); dest.push_back( Point2f(800,52) );
 
     vector<int> crop_sz;
-    crop_sz.push_back(round(372 * w * 1.0/1920)); crop_sz.push_back(round(52 * g * 1.0/1080)); crop_sz.push_back(round(458 * w * 1.0/1920)); crop_sz.push_back(round(808 * g * 1.0/1080));
+    crop_sz.push_back(372); crop_sz.push_back(52); crop_sz.push_back(458); crop_sz.push_back(808);
 
-    // vector<int> focus_sz;
-    // focus_sz.push_back(486); focus_sz.push_back(254); crop_sz.push_back(344); crop_sz.push_back(606);
+    vector<int> focus_sz;
+    focus_sz.push_back(486); focus_sz.push_back(254); crop_sz.push_back(344); crop_sz.push_back(606);
 
     Mat prev;
     bool ch = false;
@@ -93,39 +89,50 @@ int main(int argc, char* argv[]){
     psubtr= createBackgroundSubtractorMOG2(); // Background subtraction using the a pre-wriiten algorithm in opencv.
     while(1){
 
-        Mat frame;
-        cap >> frame;
-    
-        if (frame.empty())
-        break;
+        if(count%x != 0){
+            Mat frame;
+            cap >> frame;
 
-        resize(frame, frame, Size(w, g), 0, 0, INTER_CUBIC);
-        Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-        Mat static_diff;
-        absdiff(empty_road_transformed, transformed, static_diff); // Difference between images
+            if (frame.empty())
+            break;
 
-        Mat static_diff_bw;
-        cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
-        Mat dilated = process(static_diff_bw, 35);
-        // imshow("frame", dilated);
-
-        if(ch){
-            Mat dynamic_diff;
-            Mat dynamic_diff_bw;
-
-            psubtr->apply(transformed, dynamic_diff,-0.4);
-            Mat dynamic_dilated = process(dynamic_diff, 5);
-
-            float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
-            dynamic_density.push_back(d_density);
+            count++;
         }
 
-        ch = true;
-        float q_density = countNonZero(dilated)*1.0/(dilated.rows*dilated.cols); // Measure density
-        queue_density.push_back(q_density);
+        else {
+            Mat frame;
+            cap >> frame;
+        
+            if (frame.empty())
+            break;
 
-        count++;
-        time.push_back(count*1.0/15);
+            Mat transformed = perspective_transform(src, dest, crop_sz, frame);
+            Mat static_diff;
+            absdiff(empty_road_transformed, transformed, static_diff); // Difference between images
+
+            Mat static_diff_bw;
+            cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
+            Mat dilated = process(static_diff_bw, 35);
+            
+
+            if(ch){
+                Mat dynamic_diff;
+                Mat dynamic_diff_bw;
+
+                psubtr->apply(transformed, dynamic_diff,-0.4);
+                Mat dynamic_dilated = process(dynamic_diff, 5);
+
+                float d_density = countNonZero(dynamic_dilated)*1.0/(dynamic_dilated.rows*dynamic_dilated.cols);
+                dynamic_density.push_back(d_density);
+            }
+
+            ch = true;
+            float q_density = countNonZero(dilated)*1.0/(dilated.rows*dilated.cols); // Measure density
+            queue_density.push_back(q_density);
+
+            count++;
+            time.push_back(count*1.0/15);
+        }
 
         char c=(char)waitKey(25);
         if(c==27)
@@ -135,10 +142,10 @@ int main(int argc, char* argv[]){
     cap.release();
     cv::destroyAllWindows(); // Destroy frames after use.
 
-    cout<<"Time, Queue-Density, Frame_num\n";
-    for(int i=1;i<queue_density.size();i++){
-        cout<<time[i]<<", "<<queue_density[i]<<", "<<dynamic_density[i-1]<<", "<<round(time[i]*15)<<"\n";
-    }
+    // cout<<"Time, Queue-Density, Frame_num\n";
+    // for(int i=1;i<queue_density.size();i++){
+    //     cout<<time[i]<<", "<<queue_density[i]<<", "<<dynamic_density[i-1]<<", "<<round(time[i]*15)<<"\n";
+    // }
         
     return 0;
 }

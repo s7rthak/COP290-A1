@@ -5,18 +5,18 @@
 #include "perspective.hpp"
 #include <utility>
 #include <vector>
-// #include <X11/Xlib.h>
-// #define NUM_THREADS 12
 
 using namespace cv;
 using namespace std;
 using namespace boost::program_options;
+using namespace chrono;
 
 vector<float> queue_density;
-vector<pair<int, float> > thread_queue_density;
+vector<pair<int, float>> thread_queue_density;
 vector<float> dynamic_density;
-vector<Mat> frames; 
+vector<Mat> frames;
 pthread_mutex_t lok;
+
 // This function is for smoothing out the noise in the b/w image and having a consistent result.
 Mat process(Mat img, int th)
 {
@@ -30,72 +30,60 @@ Mat process(Mat img, int th)
     return dilated;
 }
 
-struct frame_info {
+struct frame_info
+{
     Mat frame;
-    Mat prev_frame;
     Rect mysplit;
     Mat empty_road_transformed;
-    vector<Point2f> src;
-    vector<Point2f> dest;
-    vector<int> crop_sz;
-    // VideoCapture cap1;
     vector<float> tqd;
     vector<float> th_time;
     int threadid;
-    int numthread;
 };
 
 void *find_density(void *frameinfo)
-{   
+{
+    // pthread_detach(pthread_self());
     struct frame_info *info;
-    info = (struct frame_info *) frameinfo ;
-    int count = info->threadid;
-    // int count = info->threadid * frames.size()*1.0/info->numthread*1.0;
-    // int last = (info->threadid+1) * frames.size()*1.0/info->numthread*1.0;
-    cout<<info->threadid<<"----000----"<<endl;
-    while (count != (int)frames.size() && count < (int)frames.size())
+    info = (struct frame_info *)frameinfo;
+    int count = 0;
+    // cout << info->threadid << "----000----" << endl;
+
+    while (count != (int)frames.size())
     {
-        Mat frame;
+        Mat transformed;
         pthread_mutex_lock(&lok);
-        frame = frames[count];
+        transformed = frames[count];
         pthread_mutex_unlock(&lok);
-        if(frame.empty())
-            {cout<<"breaked"<<endl;
-            break;}
-        // imshow(format("orig-%d",info->threadid),frame);
-        Mat transformed = perspective_transform(info->src, info->dest, info->crop_sz, frame);
+
+        if (transformed.empty())
+        {
+            cout << "breaked" << endl;
+            break;
+        }
+        // Mat transformed = perspective_transform(info->src, info->dest, info->crop_sz, frame);
         Mat static_diff;
-        // cout<<info->threadid<<"----+++++++++++----"<<endl;
-        
-        // Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-        // Mat static_diff;
-        absdiff(info->empty_road_transformed, transformed, static_diff); // Difference between images
+        absdiff(info->empty_road_transformed, transformed(info->mysplit), static_diff); // Difference between images
 
         Mat static_diff_bw;
         cvtColor(static_diff, static_diff_bw, COLOR_BGR2GRAY); // Convert to b/w
         Mat dilated = process(static_diff_bw, 35);
 
-        // ch = true;
         float q_density = countNonZero(dilated) * 1.0 / (dilated.rows * dilated.cols); // Measure density
         info->tqd.push_back(q_density);
-        cout<<"frame : "<<count<<info->threadid<<" td= "<<q_density<<endl;
-        // cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
-        count += info->numthread; //
+        // cout << info->threadid << " -> " << count << " q = "<<q_density<<endl;
+        count++;
         info->th_time.push_back(count * 1.0 / 15);
-        // info->prev_frame = info->frame;
     }
-    cout << "thread finished : "<<info->threadid << endl;
-    // thread_queue_density.push_back(make_pair(info->threadid,q_density));
-    
+    cout << "thread finished : " << info->threadid << endl;
+
+    // pthread_exit(NULL);
     pthread_exit(0);
+    // return NULL;
 }
-
-
-
 
 int main(int argc, char *argv[])
 {
-    // XInitThreads();
+    auto start0 = high_resolution_clock::now();
     string vid, emp;
     try
     {
@@ -128,25 +116,10 @@ int main(int argc, char *argv[])
         return 0;
     }
     int NUM_THREADS = stoi(argv[1]);
-    int fps = 15.0/stol(argv[2]);
     string traffic_video = vid;
+    int fps = 15.0 / stol(argv[2]);
     VideoCapture cap(traffic_video);
-    cout<<traffic_video<<endl;
-    int index=0;
-    while(1){
-        Mat frame;
-        bool f = cap.read(frame);
-        
-        // waitKey(0);
-        if(f==false){
-            cout<<"file end Breaked"<<endl;
-            break;
-        }
-        // imwrite(format("\\frames\\frame%d.jpg",index),frame);
-        // int index = cap.get(CV_CAP_POS_FRAMES);
-        if(index%fps==0) {frames.push_back(frame);}
-        index++;
-    }
+
     std::vector<cv::Point2f> src;
     src.push_back(Point2f(974, 217));
     src.push_back(Point2f(378, 973));
@@ -173,75 +146,136 @@ int main(int argc, char *argv[])
 
     Mat prev;
     bool ch = false;
+    int index = 0;
+    while (1)
+    {
+        Mat frame;
+        bool f = cap.read(frame);
+
+        if (f == false)
+        {
+            cout << "file end Breaked" << endl;
+            break;
+        }
+        Mat transformed = perspective_transform(src, dest, crop_sz, frame);
+        if (index % fps == 0)
+        {
+            frames.push_back(transformed);
+        }
+        index++;
+    }
 
     string empty_rd = emp;
     Mat empty_road = imread(empty_rd); // Empty road matrix
     Mat empty_road_transformed = perspective_transform(src, dest, crop_sz, empty_road);
 
     vector<float> time;
+
     auto start = high_resolution_clock::now();
 
     int count = 0;
     Ptr<BackgroundSubtractor> psubtr;
     psubtr = createBackgroundSubtractorMOG2(); // Background subtraction using the a pre-wriiten algorithm in opencv.
-    // Mat transformed = perspective_transform(src, dest, crop_sz, frame);
-    struct frame_info split[NUM_THREADS];
+    int width = empty_road_transformed.cols;
+    int height = empty_road_transformed.rows;
+    vector<Rect> splits;
     pthread_t threads[NUM_THREADS];
+    struct frame_info split[NUM_THREADS];
     vector<float> thread_time[NUM_THREADS];
     vector<float> thread_density[NUM_THREADS];
-    cout<<"fffffffffffff"<<endl;
-    // VideoCapture cap(traffic_video);
-    for(int tid = 0;tid<NUM_THREADS;tid++){
-        split[tid].empty_road_transformed = empty_road_transformed;
+    int tid = 0;
+    float q_d = 0.0;
+    // cout<<width<<" "<<height<<" "<<gridwidth<<" "<<gridheight<<endl;
+    if (!(NUM_THREADS == 1 || NUM_THREADS == 4 || NUM_THREADS == 9 || NUM_THREADS == 16))
+    {
+        float stripheight = height * 1.0 / NUM_THREADS;
+        for (int h = 0; h <= height - stripheight; h += stripheight)
+        {
+            Rect strip_rect(0, h, width, stripheight);
+            // cout << strip_rect << endl;
+            splits.push_back(strip_rect);
+        }
+    }
+    else
+    {
+        float gridwidth = width * 1.0 / sqrtf(NUM_THREADS);
+        float gridheight = height * 1.0 / sqrtf(NUM_THREADS);
+        for (int y = 0; y <= height - gridheight; y += gridheight)
+        {
+            for (int x = 0; x <= width - gridwidth; x += gridwidth)
+            {
+                // int k = x*y + x;
+                // cout << width << " " << height << " " << gridwidth << " " << gridheight << " " << x << " " << y << endl;
+                Rect grid_rect(x, y, gridwidth, gridheight);
+                splits.push_back(grid_rect);
+            }
+        }
+    }
+    if (pthread_mutex_init(&lok, NULL) != 0)
+    {
+        printf("\n mutex init has failed\n");
+        return 1;
+    }
+    pthread_attr_t attr;
+    pthread_attr_init(&attr);
+    pthread_attr_setdetachstate(&attr, PTHREAD_CREATE_JOINABLE);
+    for (int tid = 0; tid < NUM_THREADS; tid++)
+    {
+        split[tid].empty_road_transformed = empty_road_transformed(splits[tid]);
         split[tid].threadid = tid;
-        
-        // split[tid].cap1 = cap;
+
         split[tid].tqd = thread_density[tid];
         split[tid].th_time = thread_time[tid];
-        // split[tid].mysplit = splits[tid];
-        split[tid].src = src;
-        split[tid].dest = dest;
-        split[tid].crop_sz = crop_sz;
-        split[tid].numthread = NUM_THREADS;
-        int tc = pthread_create(&threads[tid], NULL,find_density,(void *)&split[tid]);
-        if(tc){
-            cout<<"ERROR thread not created : "<<tid<<endl;
+        split[tid].mysplit = splits[tid];
+        int tc = pthread_create(&threads[tid], &attr, find_density, (void *)&split[tid]);
+        if (tc)
+        {
+            cout << "ERROR thread not created : " << tid << endl;
             exit(-1);
         }
-        cout<<"thread created : "<<tid<<endl;
+        cout << "thread created : " << tid << endl;
     }
-    cout<<"here"<<endl;
-    // while(1){
-    //     Mat frame;
-    //     cap >> frame;
-    //     // vid.push_back(frame);
-    //     // imshow("framw",frame);
-    //     if(frame.empty()) {cout<<"break lol\n";break ;}
-
-    //     for(int i = 0; i <NUM_THREADS;i++){
-    //         if(isEqual(frame,split[i].prev_frame)) split[i].frame = frame;
-    //     }
-    // }
-    // pthread_exit(NULL);
-    // capp.release();
-    for(int i = 0; i <NUM_THREADS;i++){
-        cout<<"Thread joined"<<endl;
-        pthread_join(threads[i],NULL);
+    pthread_attr_destroy(&attr);
+    for (int i = 0; i < NUM_THREADS; i++)
+    {
+        cout << "Thread joined " << i << endl;
+        pthread_join(threads[i], NULL);
     }
     pthread_mutex_destroy(&lok);
+
     auto stop = high_resolution_clock::now();
     auto duration = duration_cast<microseconds>(stop - start);
-    cv::destroyAllWindows(); // Destroy frames after use.'
-    
-    cout << "Time, Queue-Density, Frame_num"<<endl;
+    cv::destroyAllWindows(); // Destroy frames after use.
+    cout << "Time, Queue-Density, Frame_num" << endl;
+
     // vector<float> tqd;
     // vector<float> th_time;
-    
-    for(int i =0;i<frames.size()/NUM_THREADS * 1.0;i++){
-        for(int k=0; k<NUM_THREADS;k++){
-            cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
+    for (int i = 0; i < frames.size(); i++)
+    {
+        float qd = 0.0;
+        for (int k = 0; k < NUM_THREADS; k++)
+        {
+            qd += split[k].tqd[i];
         }
+        qd = qd / NUM_THREADS * 1.0;
+        queue_density.push_back(qd);
+        // cout << split[k].th_time[i] << ", " << split[k].tqd[i] << ", "<< round(split[k].th_time[i] * 15) << endl;;
     }
-    cout << "Time taken (ms) :  " << duration.count() / 1000.0 << endl;
+
+    for (int i = 0; i < queue_density.size(); i++)
+    {
+        cout << " frame no = " << i << " qd = " << queue_density[i] << endl;
+    }
+    auto duration0 = duration_cast<microseconds>(start - start0);
+    cout << "Time taken for loading video at fps =  "<<argv[2]<<" ,time = " << duration0.count() / 1000.0 <<"(ms)" <<endl;
+    cout << "Time taken for threads (ms) :  " << duration.count() / 1000.0 <<" ,num of threads = "<<NUM_THREADS<< endl;
+    // for(int count=0;count<thread_queue_density.size();count++){
+    //     cout <<"thread qd = "<<thread_queue_density[count].first <<" -- "<<thread_queue_density[count].second<<endl;
+    // }
+    // for (int i = 1; i < queue_density.size(); i++)
+    // {
+    //     cout << time[i] << ", " << queue_density[i] << ", " << dynamic_density[i - 1] << ", " << round(time[i] * 15) << "\n";
+    // }
+
     return 0;
 }

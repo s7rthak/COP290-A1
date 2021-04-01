@@ -1,0 +1,706 @@
+Time taken for loading video at fps =  3 ,time = 41430.2(ms)
+Time taken for threads (ms) :  559.781 ,num of threads = 1
+
+Time taken for loading video at fps =  3 ,time = 40742(ms)
+Time taken for threads (ms) :  370.711 ,num of threads = 2
+
+Time taken for loading video at fps =  3 ,time = 39414.4(ms)
+Time taken for threads (ms) :  209.43 ,num of threads = 4
+
+Time taken for loading video at fps =  3 ,time = 41017.6(ms)
+Time taken for threads (ms) :  198.865 ,num of threads = 6
+
+Time taken for loading video at fps =  3 ,time = 40288.7(ms)
+Time taken for threads (ms) :  154.744 ,num of threads = 8
+
+Time taken for loading video at fps =  3 ,time = 40364.4(ms)
+Time taken for threads (ms) :  138.999 ,num of threads = 10
+
+Time taken for loading video at fps =  3 ,time = 40938.1(ms)
+Time taken for threads (ms) :  128.151 ,num of threads = 12
+
+Time taken for loading video at fps =  3 ,time = 42032.7(ms)
+Time taken for threads (ms) :  148.364 ,num of threads = 14
+
+Time taken for loading video at fps =  3 ,time = 43699.8(ms)
+Time taken for threads (ms) :  228.242 ,num of threads = 16
+
+Time taken for loading video at fps =  3 ,time = 39386.7(ms)
+Time taken for threads (ms) :  164.144 ,num of threads = 18
+
+Time taken for loading video at fps =  3 ,time = 40251.8(ms)
+Time taken for threads (ms) :  153.062 ,num of threads = 20
+
+Time taken for loading video at fps =  3 ,time = 40531.9(ms)
+Time taken for threads (ms) :  147.524 ,num of threads = 24
+
+(m4)Time taken for loading video at fps =  3 ,time = 21543.3(ms)
+(m4)Time taken for threads (ms) :  15254.9 ,num of threads = 1
+
+(m4)Time taken for loading video at fps =  3 ,time = 20600.1(ms)
+(m4)Time taken for threads (ms) :  9638.66 ,num of threads = 2
+
+(m4)Time taken for loading video at fps =  3 ,time = 19456.2(ms)
+(m4)Time taken for threads (ms) :  6651.77 ,num of threads = 3
+
+(m4)Time taken for loading video at fps =  3 ,time = 19717.4(ms)
+(m4)Time taken for threads (ms) :  5025.26 ,num of threads = 4
+
+(m4)Time taken for loading video at fps =  3 ,time = 19939.7(ms)
+(m4)Time taken for threads (ms) :  4420.66 ,num of threads = 6
+
+(m4)Time taken for loading video at fps =  3 ,time = 21313(ms)
+(m4)Time taken for threads (ms) :  4391.02 ,num of threads = 8
+
+(m4)Time taken for loading video at fps =  3 ,time = 20456.8(ms)
+(m4)Time taken for threads (ms) :  4076.64 ,num of threads = 10
+
+(m4)Time taken for loading video at fps =  3 ,time = 20114.9(ms)
+(m4)Time taken for threads (ms) :  3961.64 ,num of threads = 12
+
+(m4)Time taken for loading video at fps =  3 ,time = 19779.5(ms)
+(m4)Time taken for threads (ms) :  4082.39 ,num of threads = 14
+
+(m4)Time taken for loading video at fps =  3 ,time = 20811.7(ms)
+(m4)Time taken for threads (ms) :  4058.83 ,num of threads = 16
+
+(m4)Time taken for loading video at fps =  3 ,time = 19920.8(ms)
+(m4)Time taken for threads (ms) :  4031.87 ,num of threads = 18
+
+(m4)Time taken for loading video at fps =  3 ,time = 20535.1(ms)
+(m4)Time taken for threads (ms) :  4130.09 ,num of threads = 20
+
+(m4)Time taken for loading video at fps =  3 ,time = 19925(ms)
+(m4)Time taken for threads (ms) :  3942.28 ,num of threads = 24
+
+Time taken for loading video at fps =  3 ,time = 42495(ms)
+Time taken for threads (ms) :  561.862 ,num of threads = 1
+        Command being timed: "./m3 1 3"
+        User time (seconds): 267.89
+        System time (seconds): 5.27
+        Percent of CPU this job got: 630%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:43.35
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7183960
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1944627
+        Voluntary context switches: 107568
+        Involuntary context switches: 173739
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 40420(ms)
+Time taken for threads (ms) :  379.743 ,num of threads = 2
+        Command being timed: "./m3 2 3"
+        User time (seconds): 264.92
+        System time (seconds): 5.22
+        Percent of CPU this job got: 657%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.10
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7183880
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1971673
+        Voluntary context switches: 115835
+        Involuntary context switches: 268161
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 41217.8(ms)
+Time taken for threads (ms) :  201.825 ,num of threads = 4
+        Command being timed: "./m3 4 3"
+        User time (seconds): 269.40
+        System time (seconds): 4.35
+        Percent of CPU this job got: 656%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.73
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184524
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1833475
+        Voluntary context switches: 97208
+        Involuntary context switches: 151897
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 41492.3(ms)
+Time taken for threads (ms) :  179.922 ,num of threads = 6
+        Command being timed: "./m3 6 3"
+        User time (seconds): 270.25
+        System time (seconds): 4.77
+        Percent of CPU this job got: 655%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.98
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184080
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1971730
+        Voluntary context switches: 96550
+        Involuntary context switches: 151668
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 41821.3(ms)
+Time taken for threads (ms) :  163.459 ,num of threads = 8
+        Command being timed: "./m3 8 3"
+        User time (seconds): 272.76
+        System time (seconds): 4.74
+        Percent of CPU this job got: 656%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:42.28
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7183656
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1959728
+        Voluntary context switches: 96179
+        Involuntary context switches: 146738
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 42004.9(ms)
+Time taken for threads (ms) :  133.487 ,num of threads = 10
+        Command being timed: "./m3 10 3"
+        User time (seconds): 264.12
+        System time (seconds): 5.11
+        Percent of CPU this job got: 634%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:42.45
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7183580
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1944679
+        Voluntary context switches: 94763
+        Involuntary context switches: 157717
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 41331.8(ms)
+Time taken for threads (ms) :  138.73 ,num of threads = 12
+        Command being timed: "./m3 12 3"
+        User time (seconds): 269.72
+        System time (seconds): 4.63
+        Percent of CPU this job got: 656%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.81
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184336
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1878589
+        Voluntary context switches: 96826
+        Involuntary context switches: 146817
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 40392.1(ms)
+Time taken for threads (ms) :  143.308 ,num of threads = 14
+        Command being timed: "./m3 14 3"
+        User time (seconds): 262.29
+        System time (seconds): 4.59
+        Percent of CPU this job got: 653%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:40.85
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7183352
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1944722
+        Voluntary context switches: 96323
+        Involuntary context switches: 151365
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 40368.5(ms)
+Time taken for threads (ms) :  227.244 ,num of threads = 16
+        Command being timed: "./m3 16 3"
+        User time (seconds): 264.86
+        System time (seconds): 4.45
+        Percent of CPU this job got: 658%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:40.90
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184572
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1863708
+        Voluntary context switches: 96718
+        Involuntary context switches: 152594
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+
+Time taken for loading video at fps =  3 ,time = 42639.1(ms)
+Time taken for threads (ms) :  140.907 ,num of threads = 18
+        Command being timed: "./m3 18 3"
+        User time (seconds): 277.38
+        System time (seconds): 4.40
+        Percent of CPU this job got: 654%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:43.08
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184988
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1806576
+        Voluntary context switches: 96724
+        Involuntary context switches: 143297
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 40904.6(ms)
+Time taken for threads (ms) :  141.742 ,num of threads = 20
+        Command being timed: "./m3 20 3"
+        User time (seconds): 267.51
+        System time (seconds): 4.65
+        Percent of CPU this job got: 658%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.35
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7185180
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1953869
+        Voluntary context switches: 96519
+        Involuntary context switches: 155664
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+Time taken for loading video at fps =  3 ,time = 41281.4(ms)
+Time taken for threads (ms) :  143.949 ,num of threads = 24
+        Command being timed: "./m3 24 3"
+        User time (seconds): 269.87
+        System time (seconds): 4.68
+        Percent of CPU this job got: 657%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:41.74
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7184008
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1959947
+        Voluntary context switches: 96649
+        Involuntary context switches: 144085
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+
+    
+
+
+
+
+(m4)Time taken for loading video at fps =  3 ,time = 20152.3(ms)
+(m4)Time taken for threads (ms) :  4780.39 ,num of threads = 1
+        Command being timed: "./m4 1 3"
+        User time (seconds): 100.93
+        System time (seconds): 3.18
+        Percent of CPU this job got: 412%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.23
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7185908
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1785998
+        Voluntary context switches: 78634
+        Involuntary context switches: 15116
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 20180.8(ms)
+(m4)Time taken for threads (ms) :  8797.69 ,num of threads = 2
+        Command being timed: "./m4 2 3"
+        User time (seconds): 85.21
+        System time (seconds): 2.71
+        Percent of CPU this job got: 300%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:29.26
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7194672
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1788306
+        Voluntary context switches: 62721
+        Involuntary context switches: 40601
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19705.5(ms)
+(m4)Time taken for threads (ms) :  5583.12 ,num of threads = 4
+        Command being timed: "./m4 4 3"
+        User time (seconds): 87.56
+        System time (seconds): 2.56
+        Percent of CPU this job got: 352%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.56
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7213576
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1793098
+        Voluntary context switches: 61509
+        Involuntary context switches: 90746
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 20109.9(ms)
+(m4)Time taken for threads (ms) :  4456.03 ,num of threads = 6
+        Command being timed: "./m4 6 3"
+        User time (seconds): 90.36
+        System time (seconds): 2.63
+        Percent of CPU this job got: 374%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.83
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7233656
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1797860
+        Voluntary context switches: 60706
+        Involuntary context switches: 95629
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19532.9(ms)
+(m4)Time taken for threads (ms) :  4823.07 ,num of threads = 8
+        Command being timed: "./m4 8 3"
+        User time (seconds): 94.42
+        System time (seconds): 2.74
+        Percent of CPU this job got: 394%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.65
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7251176
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 3
+        Minor (reclaiming a frame) page faults: 1802559
+        Voluntary context switches: 58504
+        Involuntary context switches: 180617
+        Swaps: 0
+        File system inputs: 512
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 20080(ms)
+(m4)Time taken for threads (ms) :  4032.7 ,num of threads = 10
+        Command being timed: "./m4 10 3"
+        User time (seconds): 96.68
+        System time (seconds): 2.57
+        Percent of CPU this job got: 407%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.38
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7272076
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 6
+        Minor (reclaiming a frame) page faults: 1807333
+        Voluntary context switches: 56497
+        Involuntary context switches: 71863
+        Swaps: 0
+        File system inputs: 264
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19453.3(ms)
+(m4)Time taken for threads (ms) :  3874.1 ,num of threads = 12
+        Command being timed: "./m4 12 3"
+        User time (seconds): 99.16
+        System time (seconds): 2.68
+        Percent of CPU this job got: 431%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.60
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7289540
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 3
+        Minor (reclaiming a frame) page faults: 1811848
+        Voluntary context switches: 63463
+        Involuntary context switches: 67914
+        Swaps: 0
+        File system inputs: 224
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 21116.3(ms)
+(m4)Time taken for threads (ms) :  4002.63 ,num of threads = 14
+        Command being timed: "./m4 14 3"
+        User time (seconds): 103.35
+        System time (seconds): 2.84
+        Percent of CPU this job got: 417%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:25.42
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7308816
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 0
+        Minor (reclaiming a frame) page faults: 1816807
+        Voluntary context switches: 59207
+        Involuntary context switches: 202534
+        Swaps: 0
+        File system inputs: 0
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19574.8(ms)
+(m4)Time taken for threads (ms) :  4027.88 ,num of threads = 16
+        Command being timed: "./m4 16 3"
+        User time (seconds): 100.80
+        System time (seconds): 2.48
+        Percent of CPU this job got: 432%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.88
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7326220
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 1
+        Minor (reclaiming a frame) page faults: 1821294
+        Voluntary context switches: 59618
+        Involuntary context switches: 173762
+        Swaps: 0
+        File system inputs: 24
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19362.5(ms)
+(m4)Time taken for threads (ms) :  4345.57 ,num of threads = 18
+        Command being timed: "./m4 18 3"
+        User time (seconds): 99.39
+        System time (seconds): 2.63
+        Percent of CPU this job got: 425%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:23.99
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7346320
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 6
+        Minor (reclaiming a frame) page faults: 1826040
+        Voluntary context switches: 58696
+        Involuntary context switches: 129218
+        Swaps: 0
+        File system inputs: 904
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 19634.3(ms)
+(m4)Time taken for threads (ms) :  4185.93 ,num of threads = 20
+        Command being timed: "./m4 20 3"
+        User time (seconds): 101.85
+        System time (seconds): 2.43
+        Percent of CPU this job got: 431%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.15
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7364588
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 5
+        Minor (reclaiming a frame) page faults: 1830705
+        Voluntary context switches: 60161
+        Involuntary context switches: 80726
+        Swaps: 0
+        File system inputs: 552
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
+(m4)Time taken for loading video at fps =  3 ,time = 20055.1(ms)
+(m4)Time taken for threads (ms) :  4301.73 ,num of threads = 24
+        Command being timed: "./m4 24 3"
+        User time (seconds): 102.93
+        System time (seconds): 2.71
+        Percent of CPU this job got: 428%
+        Elapsed (wall clock) time (h:mm:ss or m:ss): 0:24.66
+        Average shared text size (kbytes): 0
+        Average unshared data size (kbytes): 0
+        Average stack size (kbytes): 0
+        Average total size (kbytes): 0
+        Maximum resident set size (kbytes): 7402384
+        Average resident set size (kbytes): 0
+        Major (requiring I/O) page faults: 1
+        Minor (reclaiming a frame) page faults: 1840067
+        Voluntary context switches: 60775
+        Involuntary context switches: 100320
+        Swaps: 0
+        File system inputs: 72
+        File system outputs: 0
+        Socket messages sent: 0
+        Socket messages received: 0
+        Signals delivered: 0
+        Page size (bytes): 4096
+        Exit status: 0
+
